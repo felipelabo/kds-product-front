@@ -7,7 +7,7 @@ export default function OrdersLayout() {
 	return (
 		<main className={s["pk-layout"]}>
 		<nav className={s["pk-layout__navbar"]}>
-			<Logo size="M" />
+			<Logo size="S" />
 			<strong>KDS: Krazy Display Service</strong>
 		</nav>
 			<article className={s["pk-layout__app"]}>

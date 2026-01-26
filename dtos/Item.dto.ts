@@ -6,4 +6,6 @@ export type Item = {
 		currency: string
 		amount: number
 	}
+	note?: string
+	quantity?: number
 }

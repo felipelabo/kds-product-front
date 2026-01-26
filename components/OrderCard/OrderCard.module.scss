@@ -1,0 +1,118 @@
+@import "/styles/variables.scss";
+
+.pk-order-card{
+    width: 100%;
+    background-color: #fff;
+    border-radius: 12px;
+    color: $gray-100;
+    &:hover {
+        transform: scale(0.99);
+        background-color: #f5f5f5;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        background-color: $gray-200;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        padding: 12px 12px;
+        color:white;
+
+        &-info{
+            flex:1;
+
+            & > h2 {
+                font-weight: bold;
+                font-size: 1.2rem;
+            }
+            & > h4 {
+                font-size: 0.8rem;
+                font-weight: normal;
+            }
+        }
+        &-status{
+            flex:1;
+            display: flex;
+            justify-content: end;
+            align-items: end;
+
+            & > span{
+                font-size: 0.8rem;
+            }
+        }
+        
+
+    }
+
+    &__body {
+        padding: 12px 12px 18px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }   
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: start;
+        padding: 8px 0px;
+        border-bottom: 1px solid $gray-800;
+
+        &:is(label) {
+            cursor: pointer;
+        }
+
+        &:has(input:checked) {
+            text-decoration: line-through;
+            text-decoration-color: green;
+            & > small {
+                color: gray;
+            }
+        }
+
+        & > p {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        & > small {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: red;
+        }
+    }
+    
+    &__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap:1rem;
+        padding: 8px 12px;
+
+        & > button{
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            color: $white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+
+            &:hover {
+                background-color: darken($cta, 10%);
+            }
+        }
+    }
+
+    &__btn-state{
+        flex:1;
+        background-color: cornflowerblue !important;
+    }
+
+    &__btn-option{
+        background-color: gray !important;
+    }
+}

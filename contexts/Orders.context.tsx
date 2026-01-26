@@ -11,6 +11,7 @@ import {
 export type OrdersContextProps = {
 	orders: Array<Order>
 	pickup: (order: Order) => void
+	updateOrder: (order: Order) => void
 }
 
 export const OrdersContext = createContext<OrdersContextProps>(
@@ -39,9 +40,18 @@ export function OrdersProvider(props: OrdersProviderProps) {
 		)
 	}
 
+	const updateOrder = (updatedOrder: Order) => {
+		setOrders((prevOrders) =>
+			prevOrders.map((order) =>
+				order.id === updatedOrder.id ? updatedOrder : order,
+			),
+		)
+	}
+
 	const context = {
 		orders,
 		pickup,
+		updateOrder
 	}
 
 	return (

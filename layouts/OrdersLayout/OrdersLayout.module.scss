@@ -10,13 +10,12 @@
   align-items: flex-start;
   &__navbar {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     display: flex;
-    flex-direction: column;
     gap: 8px;
     justify-content: flex-start;
     border-bottom: 1px solid $gray-900;
-    align-items: flex-start;
+    align-items: center;
   }
   &__app {
     display: grid;
