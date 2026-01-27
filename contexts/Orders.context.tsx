@@ -7,6 +7,7 @@ import {
 	useEffect,
 	useState,
 } from "react"
+import { OrderService } from "@/services/OrderService"
 
 export type OrdersContextProps = {
 	orders: Array<Order>
@@ -27,12 +28,19 @@ export function OrdersProvider(props: OrdersProviderProps) {
 	const [orders, setOrders] = useState<Array<Order>>([])
 
 	useEffect(() => {
-		const orderOrchestrator = new OrderOrchestrator()
+		/*const orderOrchestrator = new OrderOrchestrator()
 		const listener = orderOrchestrator.run()
 		listener.on("order", (order) => {
 			setOrders((prev) => [...prev, order])
-		})
+		})*/
+		getOrders()
 	}, [])
+
+	const getOrders = async()=>{
+		const orderService = new OrderService()
+		const fetchedOrders = await orderService.getOrders()
+		setOrders(fetchedOrders)
+	}
 
 	const pickup = (order: Order) => {
 		alert(
