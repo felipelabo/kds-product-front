@@ -30,16 +30,14 @@ export function RidersProvider(props: RidersProviderProps) {
 	useEffect(() => {
 		const order = orders.find((order) => !assignedOrders.includes(order.id))
 		if (order) {
+			const newRider: Rider = {
+				orderWanted: order.id,
+				pickup: () => pickup(order),
+			}
 			setAssignedOrders((prev) => [...prev, order.id])
 			setTimeout(
 				() => {
-					setRiders((prev) => [
-						...prev,
-						{
-							orderWanted: order.id,
-							pickup,
-						},
-					])
+					setRiders((prev) => [...prev,newRider])
 				},
 				getRandomInterval(4_000, 10_000),
 			)

@@ -6,6 +6,8 @@ import {
 	useContext,
 	useEffect,
 	useState,
+	useMemo,
+	useCallback,
 } from "react"
 import { OrderService } from "@/services/OrderService"
 
@@ -27,20 +29,30 @@ export type OrdersProviderProps = {
 export function OrdersProvider(props: OrdersProviderProps) {
 	const [orders, setOrders] = useState<Array<Order>>([])
 
-	useEffect(() => {
-		/*const orderOrchestrator = new OrderOrchestrator()
-		const listener = orderOrchestrator.run()
-		listener.on("order", (order) => {
-			setOrders((prev) => [...prev, order])
-		})*/
-		getOrders()
-	}, [])
+	// Instanciar el servicio una sola vez
+	const orderService = useMemo(() => new OrderService(), [])
 
-	const getOrders = async()=>{
-		const orderService = new OrderService()
-		const fetchedOrders = await orderService.getOrders()
-		setOrders(fetchedOrders)
-	}
+	const getOrders = useCallback(async () => {
+		try {
+			const fetchedOrders = await orderService.getOrders()
+			setOrders(fetchedOrders)
+		} catch (error) {
+			console.error("Polling getOrders failed:", error)
+		}
+	}, [orderService])
+
+	useEffect(() => {
+		// Primera carga inmediata
+		getOrders()
+		// Polling cada 5s
+		const polling = setInterval(() => {
+			console.log("Polling orders...")
+			getOrders()
+		}, 5_000)
+
+		return () => clearInterval(polling)
+	}, [getOrders])
+	
 
 	const pickup = (order: Order) => {
 		alert(
