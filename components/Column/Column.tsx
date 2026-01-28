@@ -12,11 +12,13 @@ export default function Column(props: ColumnProps) {
 	return (
 		<div className={s["pk-column"]}>
 			<div className={s["pk-column__title"]}>
-				<h3>{props.title}</h3>
+				<h3>{props.title}</h3><span>{props.orders.length}</span>
 			</div>
-			{props.orders.map((order) => (
-				<OrderCard key={order.id} order={order} />
-			))}
+			<div className={s["pk-column__body"]}>
+				{props.orders.map((order) => (
+					<OrderCard key={order.id} order={order} />
+				))}
+			</div>
 		</div>
 	)
 }

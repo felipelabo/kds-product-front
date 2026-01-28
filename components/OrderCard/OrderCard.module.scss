@@ -10,6 +10,24 @@
         background-color: #f5f5f5;
     }
 
+    &.warning {
+        .pk-order-card__header {
+            background-color: orange;
+        }
+    }
+
+    &.danger {
+        .pk-order-card__header {
+            background-color: red;
+        }
+    }
+
+    &.priority {
+        .pk-order-card__header {
+            background-color: purple;
+        }
+    }
+
     &__header {
         display: flex;
         justify-content: center;
@@ -100,23 +118,79 @@
             font-weight: 600;
             font-size: 1.2rem;
             cursor: pointer;
-
-            &:hover {
-                background-color: darken($cta, 10%);
-            }
         }
     }
 
     &__btn-state{
         flex:1;
         background-color: cornflowerblue !important;
+
+        &:hover {
+            background-color: darken(cornflowerblue, 10%) !important;
+        }
         
         &--error {
             background-color: red !important;
+            &:hover {
+                background-color: darken(red, 10%) !important;
+            }
         }
     }
 
     &__btn-option{
         background-color: gray;
+        &:hover {
+            background-color: darken(gray, 10%);
+        }
+    }
+
+    &__admin-actions {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+        transition: all 0.3s ease-in-out;
+
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transform: translateY(-6px);
+        pointer-events: none;
+
+        & > button{
+            flex:1;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            color: $white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        &__prioritize {
+            background-color: orange;
+
+            &:hover {
+                background-color: darken(orange, 10%);
+            }
+        }
+
+        &__cancel {
+            background-color: red;
+
+            &:hover {
+                background-color: darken(red, 10%);
+            }
+        }
+    }
+
+    &__admin-actions--open {
+        padding: 12px;
+        max-height: 120px; // suficiente para dos botones
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
     }
 }

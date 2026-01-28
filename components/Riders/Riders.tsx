@@ -7,10 +7,15 @@ export default function Riders() {
 	return (
 		<section className={s["pk-riders__container"]}>
 			<div className={s["pk-riders"]}>
-				<h3>Repartidores:</h3>
-				{riders.map((rider,index) => (
-					<Rider key={index} {...rider} />
-				))}
+				<div className={s["pk-riders__title"]}>
+					<h3>Repartidores:</h3>
+					<span>{riders.length}</span>
+				</div>
+				<div className={s["pk-riders__list"]}>
+					{riders.map((rider,index) => (
+						<Rider key={index} {...rider} />
+					))}
+				</div>
 			</div>
 		</section>
 	)

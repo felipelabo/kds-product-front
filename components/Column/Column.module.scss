@@ -9,18 +9,39 @@
   border: 1px solid $gray-800;
   border-radius: 12px;
   padding: 8px;
-  display: grid;
-  grid-template-columns: 100%;
+  display: flex;
+  flex-direction: column;
+  //grid-template-columns: 100%;
   gap: 12px;
   background-color: $gray-900;
 
   &__title {
     padding: 10px;
+    display: flex;
+    justify-content: space-between;
     & > h3 {
       font-weight: 500;
       color: $gray-200;
     }
+    & > span {
+      background-color: $gray-800;
+      color: $gray-200;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
   }
+
+  &__body {
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    overflow: auto;
+  }
+
 }
 
 .pk-card {

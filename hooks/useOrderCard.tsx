@@ -11,6 +11,8 @@ const useOrderCard = () => {
     const orderService = useMemo(() => new OrderService(), [])
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
+    const [actionView, setActionView] = useState<boolean>(false);
+    const [priorityView, setPriorityView] = useState<boolean>(false);
     
     // TODO: Conectar con el contexto cuando esté disponible
     const { updateOrder } = useOrders()
@@ -79,7 +81,11 @@ const useOrderCard = () => {
         orderService,
         getNextState,
         isLoading,
-        error
+        error,
+        actionView,
+        setActionView,
+        priorityView, 
+        setPriorityView
     }
 }
 

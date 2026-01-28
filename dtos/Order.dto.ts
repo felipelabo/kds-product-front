@@ -5,5 +5,5 @@ export type Order = {
 	state: "PENDING" | "IN_PROGRESS" | "READY" | "DELIVERED"
 	items: Array<Item>
 	name?: string
-	date?: string
+	date: string
 }

@@ -7,7 +7,8 @@ export default function Rider(props: RiderProps) {
 			className={s["pk-rider__container"]}
 		>
 			<div className={s["pk-rider__order"]}>
-				<b>{props.orderWanted} !!</b>
+				<p>{props.orderWanted} !!</p>
+				<p className={s["code"]}>code:{props.code}</p>
 			</div>
 			<svg
 				className={s["pk-rider"]}

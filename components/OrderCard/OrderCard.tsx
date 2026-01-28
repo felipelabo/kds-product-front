@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import s from './OrderCard.module.scss'
 import { Order } from '@/dtos/Order.dto'
 import useOrderCard from '@/hooks/useOrderCard'
+import { useOrderDelay } from '@/hooks/useOrderDealy'
 
 interface OrderCardProps {
     order: Order
@@ -9,18 +10,26 @@ interface OrderCardProps {
 
 const OrderCard = ({order}:OrderCardProps) => {
 
-    const { handleChangeState, canAdvanceState, getNextState, isLoading, error } = useOrderCard()
+    const { 
+        handleChangeState, 
+        canAdvanceState, 
+        getNextState, 
+        isLoading, 
+        actionView, setActionView,
+        priorityView,
+        error 
+    } = useOrderCard()
 
-    
+    const delayInfo =  useOrderDelay(order);
 
-    return <div className={s['pk-order-card']}>
+    return <div className={`${s['pk-order-card']} ${priorityView ? s['priority'] : s[delayInfo.delayLevel]}`}>
         <div className={s['pk-order-card__header']}>
             <div className={s['pk-order-card__header-info']}>
                 <h2># {order.id}</h2>
                 <h4>{order.name || 'usuario'}</h4>
             </div>
             <div className={s['pk-order-card__header-status']}>
-                <span>{order.date || ''}</span>
+                { order.date && <span>{new Date(order.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>}
             </div>
             
         </div>
@@ -49,7 +58,18 @@ const OrderCard = ({order}:OrderCardProps) => {
                 {!isLoading && (getNextState(order.state) || 'Completado')}
                 {isLoading && '...'}
             </button>
-            <button className={s['pk-order-card__btn-option']}>. . .</button>
+            <button 
+                className={s['pk-order-card__btn-option']}
+                onClick={() => setActionView(!actionView)}
+            >. . .</button>
+        </div>
+        <div className={`${s['pk-order-card__admin-actions']} ${actionView ? s['pk-order-card__admin-actions--open'] : ''}`}>
+            <button
+                className={s['pk-order-card__admin-actions__prioritize']}
+            >Priorizar</button>
+            <button
+                className={s['pk-order-card__admin-actions__cancel']}
+            >Cancelar</button>
         </div>
     </div>
 }
