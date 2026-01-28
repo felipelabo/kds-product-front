@@ -9,7 +9,7 @@ interface OrderCardProps {
 
 const OrderCard = ({order}:OrderCardProps) => {
 
-    const { handleChangeState, canAdvanceState, getNextState } = useOrderCard()
+    const { handleChangeState, canAdvanceState, getNextState, isLoading, error } = useOrderCard()
 
     
 
@@ -42,11 +42,12 @@ const OrderCard = ({order}:OrderCardProps) => {
         </div>
         <div className={s['pk-order-card__footer']}>
             <button 
-                className={s['pk-order-card__btn-state']}
+                className={`${s['pk-order-card__btn-state']} ${error ? s['pk-order-card__btn-state--error'] : ''}`}
                 disabled={!canAdvanceState(order)}
-                onClick={() => handleChangeState(order)}
+                onClick={async() => await handleChangeState(order)}
             >
-                {getNextState(order.state) || 'Completado'}
+                {!isLoading && (getNextState(order.state) || 'Completado')}
+                {isLoading && '...'}
             </button>
             <button className={s['pk-order-card__btn-option']}>. . .</button>
         </div>

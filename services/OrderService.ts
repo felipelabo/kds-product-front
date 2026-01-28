@@ -1,66 +1,103 @@
 import { Order } from '../dtos/Order.dto'
+import { fetchApi } from '@/helpers/utilities'
 
-// Opción 1: Usar proxy de Next.js (recomendado)
-const API_URL = 'http://localhost:3001/orders'; //'/api/orders'
+const API_URL_BASE = `${process.env.NEXT_PUBLIC_API_ORDERSERVICE_BASE}`;
 
-// Opción 2: API directa (requiere configurar CORS en tu servidor)
-// const API_URL = 'http://localhost:3001/orders'
+const API_URL_GETACTIVEORDERS = `${process.env.NEXT_PUBLIC_API_URL_GETACTIVEORDERS}`;
+const API_URL_MOVEINPROGRESS = `${process.env.NEXT_PUBLIC_API_URL_MOVEINPROGRESS}`;
+const API_URL_MOVEREADY = `${process.env.NEXT_PUBLIC_API_URL_MOVEREADY}`;
+const API_URL_MOVEDELIVERED = `${process.env.NEXT_PUBLIC_API_URL_MOVEDELIVERED}`;
+// const API_URL_UPDATEORDER = `${process.env.API_URL_UPDATEORDER}`'
 
 export class OrderService {
 
   async getOrders(): Promise<Order[]> {
     try {
-      console.log('Fetching orders from', API_URL);
-      const res = await fetch(API_URL, {
+      const res = await fetchApi<Order[]>(API_URL_BASE + API_URL_GETACTIVEORDERS,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-        },
-        // Opcional: si necesitas credenciales
-        // credentials: 'include',
+        }
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const data = await res.json();
-      console.log('Fetched orders:', data);
-      return data;
+      return res;
       
     } catch (error) {
       console.error('Error fetching orders:', error);
-      
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        console.error('🚨 CORS or Network error detected');
-        console.error('💡 Possible solutions:');
-        console.error('   1. Check if API server is running on', API_URL);
-        console.error('   2. Configure CORS on your API server');
-        console.error('   3. Use Next.js API routes as proxy');
-      }
-      
       throw error;
     }
   }
   
-  moveToInProgress(order: Order): Order {
-    if (order.state !== 'PENDING') {
-      throw new Error('Order must be pending to move to in progress')
+  async moveToInProgress(order: Order): Promise<Order> {
+
+    if (order.state !== 'PENDING') throw new Error('Order must be pending to move to in progress')
+    const url = `${API_URL_BASE}/${order.id}${API_URL_MOVEINPROGRESS}`;
+
+    try{
+      
+      const res = await fetchApi<{message:string,data:Order}>(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (res.data.id == order.id && res.data.state == 'IN_PROGRESS') return res.data;
+      return order;
+      
+      
+    }catch(error){
+      console.error('Error moving order to in progress:', error);
+      throw error;
     }
-    return { 
-      ...order, 
-      state: 'IN_PROGRESS'
+    
+  }
+
+  async moveToReady(order: Order): Promise<Order> {
+    if (order.state !== 'IN_PROGRESS') throw new Error('Order must be in progress to move to ready')
+    const url = `${API_URL_BASE}/${order.id}${API_URL_MOVEREADY}`;
+
+    try{
+      
+      const res = await fetchApi<{message:string,data:Order}>(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (res.data.id == order.id && res.data.state == 'READY') return res.data;
+      return order;
+      
+      
+    }catch(error){
+      console.error('Error moving order to ready:', error);
+      throw error;
     }
   }
 
-  moveToReady(order: Order): Order {
-    if (order.state !== 'IN_PROGRESS') {
-      throw new Error('Order must be in progress to move to ready')
-    }
-    return { 
-      ...order, 
-      state: 'READY'
+  async moveToDelivered(order: Order): Promise<Order> {
+    if (order.state !== 'READY') throw new Error('Order must be ready to move to delivered')
+    const url = `${API_URL_BASE}/${order.id}${API_URL_MOVEDELIVERED}`;
+
+    try{
+      
+      const res = await fetchApi<{message:string,data:Order}>(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      if (res.data.id == order.id && res.data.state == 'DELIVERED') return res.data;
+      return order;
+
+    }catch(error){
+      console.error('Error moving order to delivered:', error);
+      throw error;
     }
   }
 

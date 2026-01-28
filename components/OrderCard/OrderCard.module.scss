@@ -110,9 +110,13 @@
     &__btn-state{
         flex:1;
         background-color: cornflowerblue !important;
+        
+        &--error {
+            background-color: red !important;
+        }
     }
 
     &__btn-option{
-        background-color: gray !important;
+        background-color: gray;
     }
 }

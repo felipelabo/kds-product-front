@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Order } from "@/dtos/Order.dto";
 import { OrderService } from "@/services/OrderService";
 import { useOrders } from '@/contexts/Orders.context';
@@ -9,35 +9,41 @@ const useOrderCard = () => {
 
     // Instancia única del servicio
     const orderService = useMemo(() => new OrderService(), [])
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<boolean>(false);
     
     // TODO: Conectar con el contexto cuando esté disponible
     const { updateOrder } = useOrders()
 
-    const handleChangeState = useCallback((order: Order) => {
+    const handleChangeState = useCallback(async(order: Order) => {
+        setIsLoading(true);
         try {
             let updatedOrder: Order;
             
             switch(order.state) {
                 case 'PENDING':
-                    updatedOrder = orderService.moveToInProgress(order);
+                    updatedOrder = await orderService.moveToInProgress(order);
                     break;
                 case 'IN_PROGRESS':
-                    updatedOrder = orderService.moveToReady(order);
+                    updatedOrder = await orderService.moveToReady(order);
                     break;
                 case 'READY':
                     // TODO: Implementar lógica de entrega
-                    console.log('Order ready for pickup:', order.id);
-                    return order;
+                    updatedOrder = await orderService.moveToDelivered(order);
+                    break;
                 default:
-                    return order;
+                    updatedOrder = order;
             }
             
             updateOrder(updatedOrder)
             console.log(`Order ${order.id} moved from ${order.state} to ${updatedOrder.state}`);
-            
+            setIsLoading(false);
+            if(error) setError(false)
             return updatedOrder;
         } catch (error) {
             console.error("Error changing order state:", error);
+            setIsLoading(false);
+            setError(true);
             return order; // Retornar orden original en caso de error
         }
     }, [orderService])
@@ -71,7 +77,9 @@ const useOrderCard = () => {
         handleChangeState,
         canAdvanceState,
         orderService,
-        getNextState
+        getNextState,
+        isLoading,
+        error
     }
 }
 
