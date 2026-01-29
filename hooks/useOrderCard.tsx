@@ -22,6 +22,7 @@ const useOrderCard = () => {
     // TODO: Conectar con el contexto cuando esté disponible
     const { updateOrder } = useOrders()
 
+    // Maneja el cambio de estado de la orden
     const handleChangeState = useCallback(async(order: Order) => {
         setIsLoading(true);
         try {
@@ -55,6 +56,7 @@ const useOrderCard = () => {
         }
     }, [orderService])
 
+    // Verificar código de entrega y avanza al estado DELIVERED si es correcto
     const verifyCode = useCallback(async (order: Order) => {
         if (!valueRef.current) {
             console.error("Input ref not found");
@@ -75,35 +77,6 @@ const useOrderCard = () => {
             setError(true);
         }
 
-        /*setIsLoading(true);
-        try {
-            // Buscar rider con el código ingresado
-            const rider = riders.find(rider => rider.code === enteredCode);
-            
-            if (rider) {
-                // Código válido, proceder con la entrega
-                const updatedOrder = await orderService.moveToDelivered(order);
-                updateOrder(updatedOrder);
-                console.log(`Order ${order.id} delivered to rider with code ${enteredCode}`);
-                
-                // Limpiar el input
-                valueRef.current.value = '';
-                setIsLoading(false);
-                if(error) setError(false);
-                return updatedOrder;
-            } else {
-                // Código inválido
-                console.error("Invalid delivery code:", enteredCode);
-                setError(true);
-                setIsLoading(false);
-                return order;
-            }
-        } catch (error) {
-            console.error("Error verifying delivery code:", error);
-            setIsLoading(false);
-            setError(true);
-            return order;
-        }*/
     }, [orderService, riders, updateOrder, error]);
 
     const canAdvanceState = useCallback((order: Order): boolean => {
@@ -118,6 +91,7 @@ const useOrderCard = () => {
         }
     }, [orderService])
 
+    // Obtener el siguiente estado legible (Botón de acción)
     const getNextState = (state: Order['state']): nextStateType | null => {
         switch(state) {
             case 'PENDING':
@@ -130,6 +104,23 @@ const useOrderCard = () => {
                 return null
         }
     }
+
+    const cancelOrder = useCallback(async(order: Order) => {
+        setIsLoading(true);
+        try {
+            const updatedOrder = await orderService.cancelOrder(order);
+            updateOrder(updatedOrder)
+            console.log(`Order ${order.id} cancelled.`);
+            setIsLoading(false);
+            if(error) setError(false)
+            return updatedOrder;
+        } catch (error) {
+            console.error("Error cancelling order:", error);
+            setIsLoading(false);
+            setError(true);
+            return order; // Retornar orden original en caso de error
+        }
+    }, [orderService])
 
     return {
         handleChangeState,
@@ -145,7 +136,8 @@ const useOrderCard = () => {
         setPriorityView,
         valueRef,
         codeView, setCodeView,
-        verifyCode
+        verifyCode,
+        cancelOrder
     }
 }
 

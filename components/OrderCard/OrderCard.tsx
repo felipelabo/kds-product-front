@@ -20,7 +20,8 @@ const OrderCard = ({order}:OrderCardProps) => {
         error, setError,
         valueRef,
         codeView, setCodeView,
-        verifyCode
+        verifyCode,
+        cancelOrder
     } = useOrderCard()
 
     const delayInfo =  useOrderDelay(order);
@@ -91,6 +92,7 @@ const OrderCard = ({order}:OrderCardProps) => {
             >Priorizar</button>
             <button
                 className={s['pk-order-card__admin-actions__cancel']}
+                onClick={()=>cancelOrder(order)}
             >Cancelar</button>
         </div>
         {order.state == 'READY' && <div className={`${s['pk-order-card__delivery-code']} ${codeView ? s['pk-order-card__delivery-code--open'] : ''}`}>

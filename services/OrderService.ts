@@ -7,7 +7,7 @@ const API_URL_GETACTIVEORDERS = `${process.env.NEXT_PUBLIC_API_URL_GETACTIVEORDE
 const API_URL_MOVEINPROGRESS = `${process.env.NEXT_PUBLIC_API_URL_MOVEINPROGRESS}`;
 const API_URL_MOVEREADY = `${process.env.NEXT_PUBLIC_API_URL_MOVEREADY}`;
 const API_URL_MOVEDELIVERED = `${process.env.NEXT_PUBLIC_API_URL_MOVEDELIVERED}`;
-// const API_URL_UPDATEORDER = `${process.env.API_URL_UPDATEORDER}`'
+const API_URL_CANCELORDER = `${process.env.NEXT_PUBLIC_API_URL_CANCELORDER}`;
 
 export class OrderService {
 
@@ -97,6 +97,29 @@ export class OrderService {
 
     }catch(error){
       console.error('Error moving order to delivered:', error);
+      throw error;
+    }
+  }
+
+  async cancelOrder(order: Order): Promise<Order> {
+    //IMPLEMENTAR CANCELAR ORDEN
+    if (order.state === 'CANCELLED') throw new Error('Order is already cancelled')
+    const url = `${API_URL_BASE}/${order.id}${API_URL_CANCELORDER}`;
+  
+    try{
+      
+      const res = await fetchApi<{message:string,data:Order}>(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      //VERIFICAR RESPUESTA Y ACTUALIZAR ESTADO DE LA ORDEN
+      if (res.data.id == order.id && res.data.state == 'CANCELLED') return res.data;
+      return order;
+    }catch(error){
+      console.error('Error cancelling order:', error);
       throw error;
     }
   }
