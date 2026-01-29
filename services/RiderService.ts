@@ -7,11 +7,7 @@ export class RiderService {
   async getRiders(): Promise<Rider[]> {
     try {
       const res = await fetchApi<Rider[]>(API_URL_BASE,{
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        }
+        method: 'GET'
       });
 
       return res;

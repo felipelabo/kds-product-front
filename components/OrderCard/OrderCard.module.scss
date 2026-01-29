@@ -118,12 +118,19 @@
             font-weight: 600;
             font-size: 1.2rem;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 
     &__btn-state{
         flex:1;
         background-color: cornflowerblue !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
 
         &:hover {
             background-color: darken(cornflowerblue, 10%) !important;
@@ -179,7 +186,7 @@
             border: none;
             color: $white;
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
         }
 

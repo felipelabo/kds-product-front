@@ -3,6 +3,11 @@ import s from './OrderCard.module.scss'
 import { Order } from '@/dtos/Order.dto'
 import useOrderCard from '@/hooks/useOrderCard'
 import { useOrderDelay } from '@/hooks/useOrderDealy'
+import { 
+    ChevronRight,
+    Ellipsis,
+    X as CloseIcon
+} from 'lucide-react';
 
 interface OrderCardProps {
     order: Order
@@ -70,13 +75,18 @@ const OrderCard = ({order}:OrderCardProps) => {
                     }
                 }}
             >
-                {!isLoading && (getNextState(order.state) || 'Completado')}
+                {!isLoading && <>
+                    {(getNextState(order.state) || 'Completado')}
+                    <ChevronRight />
+                </>}
                 {isLoading && '...'}
             </button>
             {!codeView && <button 
                 className={s['pk-order-card__btn-option']}
                 onClick={() => setActionView(!actionView)}
-            >. . .</button>}
+            >
+                <Ellipsis />
+            </button>}
             {codeView && <button 
                 className={s['pk-order-card__btn-option-close']}
                 onClick={() => {
@@ -84,12 +94,14 @@ const OrderCard = ({order}:OrderCardProps) => {
                     setActionView(false);
                     setError(false);
                 }}
-            >X</button>}
+            >
+                <CloseIcon />
+            </button>}
         </div>
         <div className={`${s['pk-order-card__admin-actions']} ${actionView ? s['pk-order-card__admin-actions--open'] : ''}`}>
             <button
                 className={s['pk-order-card__admin-actions__prioritize']}
-            >Priorizar</button>
+            >Accion 01</button>
             <button
                 className={s['pk-order-card__admin-actions__cancel']}
                 onClick={()=>cancelOrder(order)}

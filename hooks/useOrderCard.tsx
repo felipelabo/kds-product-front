@@ -3,6 +3,7 @@ import { Order } from "@/dtos/Order.dto";
 import { OrderService } from "@/services/OrderService";
 import { useOrders } from '@/contexts/Orders.context';
 import { useRiders } from '@/contexts/Riders.context';
+import { toast } from 'react-toastify';
 
 type nextStateType = 'Preparar' | 'Terminar' | 'Entregar' 
 
@@ -71,6 +72,11 @@ const useOrderCard = () => {
             console.log("Valid delivery code:", enteredCode);
             setError(false);
             handleChangeState(order);
+            toast.success(`Orden ${order.id} entregada con éxito.`,{
+                hideProgressBar: true,
+                autoClose: 3000,
+                theme: "colored"
+            });
             valueRef.current.value = '';
         } else {
             console.error("Invalid delivery code:", enteredCode);
@@ -113,6 +119,11 @@ const useOrderCard = () => {
             console.log(`Order ${order.id} cancelled.`);
             setIsLoading(false);
             if(error) setError(false)
+            toast.success(`Orden ${order.id} cancelada.`,{
+                hideProgressBar: true,
+                autoClose: 3000,
+                theme: "colored"
+            });
             return updatedOrder;
         } catch (error) {
             console.error("Error cancelling order:", error);

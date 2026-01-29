@@ -20,8 +20,17 @@ export async function fetchApi<T>(url: string, options?: RequestInit): Promise<T
 
 		const realUrl = `${process.env.NEXT_PUBLIC_API_URL_BASE}:${process.env.NEXT_PUBLIC_API_PORT}${url}`;
 		console.log(`Fetching: ${realUrl}`);
-		console.log('Options:', options);
-		const response = await fetch(realUrl, options);
+		console.log('Options:', {...options,});
+		const optionsWithDefaults: RequestInit = {
+			...options,
+			headers: {
+				'Content-Type': 'application/json',
+          		'Accept': 'application/json',
+				'x-api-key': process.env.NEXT_PUBLIC_API_KEY!,
+				...options?.headers,
+			},
+		};
+		const response = await fetch(realUrl, optionsWithDefaults);
 		
 		if (!response.ok) {
 			throw new Error(`Error fetching ${url}: ${response.status} ${response.statusText}`);

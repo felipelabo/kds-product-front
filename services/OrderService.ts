@@ -15,10 +15,6 @@ export class OrderService {
     try {
       const res = await fetchApi<Order[]>(API_URL_BASE + API_URL_GETACTIVEORDERS,{
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        }
       });
 
       return res;
@@ -38,10 +34,6 @@ export class OrderService {
       
       const res = await fetchApi<{message:string,data:Order}>(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
       });
 
       if (res.data.id == order.id && res.data.state == 'IN_PROGRESS') return res.data;
@@ -63,10 +55,6 @@ export class OrderService {
       
       const res = await fetchApi<{message:string,data:Order}>(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
       });
 
       if (res.data.id == order.id && res.data.state == 'READY') return res.data;
@@ -87,10 +75,6 @@ export class OrderService {
       
       const res = await fetchApi<{message:string,data:Order}>(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
       });
       if (res.data.id == order.id && res.data.state == 'DELIVERED') return res.data;
       return order;
@@ -110,10 +94,6 @@ export class OrderService {
       
       const res = await fetchApi<{message:string,data:Order}>(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
       });
       //VERIFICAR RESPUESTA Y ACTUALIZAR ESTADO DE LA ORDEN
       if (res.data.id == order.id && res.data.state == 'CANCELLED') return res.data;
