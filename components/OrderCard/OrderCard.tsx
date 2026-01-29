@@ -17,7 +17,10 @@ const OrderCard = ({order}:OrderCardProps) => {
         isLoading, 
         actionView, setActionView,
         priorityView,
-        error 
+        error, setError,
+        valueRef,
+        codeView, setCodeView,
+        verifyCode
     } = useOrderCard()
 
     const delayInfo =  useOrderDelay(order);
@@ -51,17 +54,36 @@ const OrderCard = ({order}:OrderCardProps) => {
         </div>
         <div className={s['pk-order-card__footer']}>
             <button 
-                className={`${s['pk-order-card__btn-state']} ${error ? s['pk-order-card__btn-state--error'] : ''}`}
+                className={`${s['pk-order-card__btn-state']} ${error ? s['pk-order-card__btn-state--error'] : codeView ? s['pk-order-card__btn-state--code'] : ''}`}
                 disabled={!canAdvanceState(order)}
-                onClick={async() => await handleChangeState(order)}
+                onClick={async() => {
+                    if (order.state === 'READY') {
+                        if(!codeView) {
+                            setCodeView(true);
+                            return;
+                        }else{
+                            await verifyCode(order);
+                        }
+                    } else {
+                        await handleChangeState(order);
+                    }
+                }}
             >
                 {!isLoading && (getNextState(order.state) || 'Completado')}
                 {isLoading && '...'}
             </button>
-            <button 
+            {!codeView && <button 
                 className={s['pk-order-card__btn-option']}
                 onClick={() => setActionView(!actionView)}
-            >. . .</button>
+            >. . .</button>}
+            {codeView && <button 
+                className={s['pk-order-card__btn-option-close']}
+                onClick={() => {
+                    setCodeView(false);
+                    setActionView(false);
+                    setError(false);
+                }}
+            >X</button>}
         </div>
         <div className={`${s['pk-order-card__admin-actions']} ${actionView ? s['pk-order-card__admin-actions--open'] : ''}`}>
             <button
@@ -71,6 +93,14 @@ const OrderCard = ({order}:OrderCardProps) => {
                 className={s['pk-order-card__admin-actions__cancel']}
             >Cancelar</button>
         </div>
+        {order.state == 'READY' && <div className={`${s['pk-order-card__delivery-code']} ${codeView ? s['pk-order-card__delivery-code--open'] : ''}`}>
+            <label htmlFor="delivery-code">
+                Código de delivery:
+                <input ref={valueRef} id="delivery-code" type="number"  min={0} max={9999} />
+            </label>
+            {!error && <small className={s['pk-order-card__delivery-code__hint']}>Ingresa el código proporcionado al repartidor</small>}
+            {error && <div className={s['pk-order-card__delivery-code__error']}>Código inválido. Intenta de nuevo.</div>}
+        </div>}
     </div>
 }
 
