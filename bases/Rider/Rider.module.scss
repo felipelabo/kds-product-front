@@ -37,6 +37,12 @@
     background-color: #f9cc01;
     padding: 10px;
     animation: appear 300ms 1000ms forwards;
+    & > p{
+      font-weight: bold;
+    }
+    & > .code{
+      font-size: 10px;
+    }
   }
   animation: animation 1000ms;
 }

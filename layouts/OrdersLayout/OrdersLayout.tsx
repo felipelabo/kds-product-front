@@ -2,18 +2,20 @@ import Logo from "@/bases/Logo/Logo"
 import s from "./OrdersLayout.module.scss"
 import Riders from "@/components/Riders/Riders"
 import Kanban from "@/components/Kanban/Kanban"
+import { ToastContainer } from "react-toastify"
 
 export default function OrdersLayout() {
 	return (
 		<main className={s["pk-layout"]}>
-		<nav className={s["pk-layout__navbar"]}>
-			<Logo size="M" />
-			<strong>KDS: Krazy Display Service</strong>
-		</nav>
+			<nav className={s["pk-layout__navbar"]}>
+				<Logo size="S" />
+				<strong>KDS: Krazy Display Service</strong>
+			</nav>
 			<article className={s["pk-layout__app"]}>
 				<Kanban />
 				<Riders />
 			</article>
+			<ToastContainer/>
 		</main>
 	)
 }

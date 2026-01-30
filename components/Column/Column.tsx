@@ -1,5 +1,6 @@
 import s from "./Column.module.scss"
 import { Order } from "@/dtos/Order.dto"
+import OrderCard from "../OrderCard/OrderCard"
 
 export type ColumnProps = {
 	orders: Array<Order>
@@ -11,25 +12,13 @@ export default function Column(props: ColumnProps) {
 	return (
 		<div className={s["pk-column"]}>
 			<div className={s["pk-column__title"]}>
-				<h3>{props.title}</h3>
+				<h3>{props.title}</h3><span>{props.orders.length}</span>
 			</div>
-			{props.orders.map((order) => (
-				<div
-					onClick={() => props.onClick && props.onClick(order)}
-					className={s["pk-card"]}
-				>
-					<div>
-						<span>
-							Orden: <b>{order.id}</b>
-						</span>
-					</div>
-					<div>
-						{order.items.map((item) => (
-							<div></div>
-						))}
-					</div>
-				</div>
-			))}
+			<div className={s["pk-column__body"]}>
+				{props.orders.map((order) => (
+					<OrderCard key={order.id} order={order} />
+				))}
+			</div>
 		</div>
 	)
 }

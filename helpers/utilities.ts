@@ -14,3 +14,32 @@ export function getRandomId() {
 export function getRandomInterval(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1)) + min
 }
+
+export async function fetchApi<T>(url: string, options?: RequestInit): Promise<T> {
+	try {
+
+		const realUrl = `${process.env.NEXT_PUBLIC_API_URL_BASE}:${process.env.NEXT_PUBLIC_API_PORT}${url}`;
+		console.log(`Fetching: ${realUrl}`);
+		console.log('Options:', {...options,});
+		const optionsWithDefaults: RequestInit = {
+			...options,
+			headers: {
+				'Content-Type': 'application/json',
+          		'Accept': 'application/json',
+				'x-api-key': process.env.NEXT_PUBLIC_API_KEY!,
+				...options?.headers,
+			},
+		};
+		const response = await fetch(realUrl, optionsWithDefaults);
+		
+		if (!response.ok) {
+			throw new Error(`Error fetching ${url}: ${response.status} ${response.statusText}`);
+		}
+		
+		const data = await response.json() as T;
+		return data;
+		
+	} catch (error) {
+		throw new Error(`Fetch error: ${error instanceof Error ? error.message : 'Unknown error'}`); 
+	}
+}
