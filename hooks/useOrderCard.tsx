@@ -17,8 +17,6 @@ const useOrderCard = () => {
     const [priorityView, setPriorityView] = useState<boolean>(false);
     const valueRef = useRef<HTMLInputElement>(null);
     const [codeView, setCodeView] = useState<boolean>(false);
-
-    const {riders} = useRiders();
     
     // TODO: Conectar con el contexto cuando esté disponible
     const { updateOrder } = useOrders()
@@ -35,10 +33,6 @@ const useOrderCard = () => {
                     break;
                 case 'IN_PROGRESS':
                     updatedOrder = await orderService.moveToReady(order);
-                    break;
-                case 'READY':
-                    // TODO: Implementar lógica de entrega
-                    updatedOrder = await orderService.moveToDelivered(order);
                     break;
                 default:
                     updatedOrder = order;
@@ -65,25 +59,32 @@ const useOrderCard = () => {
         }
         
         const enteredCode = valueRef.current.value;
-        if (!enteredCode) console.error("No code entered");
+        if (!enteredCode) {
+            console.error("No code entered");
+            setError(true);
+            return;
+        }
 
-        const rider = riders.find(rider => rider.code === enteredCode && rider.orderWanted === order.id);
-        if (rider) {
-            console.log("Valid delivery code:", enteredCode);
+        try{
             setError(false);
-            handleChangeState(order);
-            toast.success(`Orden ${order.id} entregada con éxito.`,{
-                hideProgressBar: true,
-                autoClose: 3000,
-                theme: "colored"
-            });
-            valueRef.current.value = '';
-        } else {
-            console.error("Invalid delivery code:", enteredCode);
+            const updatedOrder = await orderService.moveToDelivered(order, enteredCode);
+            if(updatedOrder.state === 'DELIVERED'){
+                updateOrder(updatedOrder);
+                toast.success(`Orden ${order.id} entregada con éxito.`,{
+                    hideProgressBar: true,
+                    autoClose: 3000,
+                    theme: "colored"
+                });
+            } else {
+                console.error("Incorrect code entered.");
+            }
+
+        }catch(error){
+            console.error("Error verifying code:", error);
             setError(true);
         }
 
-    }, [orderService, riders, updateOrder, error]);
+    }, [orderService]);
 
     const canAdvanceState = useCallback((order: Order): boolean => {
         switch(order.state) {

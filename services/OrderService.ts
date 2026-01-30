@@ -67,7 +67,7 @@ export class OrderService {
     }
   }
 
-  async moveToDelivered(order: Order): Promise<Order> {
+  async moveToDelivered(order: Order, codeRider: string ): Promise<Order> {
     if (order.state !== 'READY') throw new Error('Order must be ready to move to delivered')
     const url = `${API_URL_BASE}/${order.id}${API_URL_MOVEDELIVERED}`;
 
@@ -75,6 +75,7 @@ export class OrderService {
       
       const res = await fetchApi<{message:string,data:Order}>(url, {
         method: 'POST',
+        body: JSON.stringify({ codeRider: codeRider }),
       });
       if (res.data.id == order.id && res.data.state == 'DELIVERED') return res.data;
       return order;
