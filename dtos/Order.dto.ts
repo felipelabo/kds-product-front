@@ -7,3 +7,5 @@ export type Order = {
 	name?: string
 	date: string
 }
+
+export type nextStateType = 'Preparar' | 'Terminar' | 'Entregar' 

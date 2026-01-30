@@ -99,4 +99,6 @@ Esto refuerza la consistencia del sistema y evita duplicar reglas.
 - Manejo de estados globales más complejo si el sistema crece.
 - Tests de componentes y hooks.
 - Mejoras visuales y de UX.
+- Opcion de agregar botones con mas opcion en el menu de cada orden.
+- Agregar accion de eliminar items de la orden (Aplicado solo UI en el esto de "En preparación").
 - Manejo de errores y estados de carga más detallados.

@@ -16,17 +16,17 @@ interface OrderCardProps {
 const OrderCard = ({order}:OrderCardProps) => {
 
     const { 
-        handleChangeState, 
         canAdvanceState, 
         getNextState, 
         isLoading, 
         actionView, setActionView,
         priorityView,
-        error, setError,
+        error,
         valueRef,
-        codeView, setCodeView,
-        verifyCode,
-        cancelOrder
+        codeView,
+        cancelOrder,
+        stateChangeButton,
+        closeButtonOption
     } = useOrderCard()
 
     const delayInfo =  useOrderDelay(order);
@@ -38,12 +38,16 @@ const OrderCard = ({order}:OrderCardProps) => {
                 <h4>{order.name || 'usuario'}</h4>
             </div>
             <div className={s['pk-order-card__header-status']}>
-                { order.date && <span>{new Date(order.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>}
+                <span>items: <b>{order.items.length}</b></span>
+                { order.date && <span>{new Date(order.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</span>}
             </div>
             
         </div>
         <div className={s['pk-order-card__body']}>
             {order.items.map((item, index) => (
+
+                /*POSIBLE MEJORA: Agregar funcionalidad y utilizar a nivel de negocio la seleccion de items */
+
                 <Fragment key={index}>
                 {order.state !== 'IN_PROGRESS' ? <div key={index} className={s['pk-order-card__item']}>
                     <p>{item.quantity} x {item.name}</p>
@@ -58,22 +62,13 @@ const OrderCard = ({order}:OrderCardProps) => {
                 </Fragment>
             ))}
         </div>
+
         <div className={s['pk-order-card__footer']}>
+            {/* State Change Button */}
             <button 
                 className={`${s['pk-order-card__btn-state']} ${error ? s['pk-order-card__btn-state--error'] : codeView ? s['pk-order-card__btn-state--code'] : ''}`}
                 disabled={!canAdvanceState(order)}
-                onClick={async() => {
-                    if (order.state === 'READY') {
-                        if(!codeView) {
-                            setCodeView(true);
-                            return;
-                        }else{
-                            await verifyCode(order);
-                        }
-                    } else {
-                        await handleChangeState(order);
-                    }
-                }}
+                onClick={async() => await stateChangeButton(order)}
             >
                 {!isLoading && <>
                     {(getNextState(order.state) || 'Completado')}
@@ -81,6 +76,7 @@ const OrderCard = ({order}:OrderCardProps) => {
                 </>}
                 {isLoading && '...'}
             </button>
+            {/* Options Button */}
             {!codeView && <button 
                 className={s['pk-order-card__btn-option']}
                 onClick={() => setActionView(!actionView)}
@@ -89,24 +85,25 @@ const OrderCard = ({order}:OrderCardProps) => {
             </button>}
             {codeView && <button 
                 className={s['pk-order-card__btn-option-close']}
-                onClick={() => {
-                    setCodeView(false);
-                    setActionView(false);
-                    setError(false);
-                }}
+                onClick={() => closeButtonOption()}
             >
                 <CloseIcon />
             </button>}
         </div>
+
+        {/* Admin Actions */}
         <div className={`${s['pk-order-card__admin-actions']} ${actionView ? s['pk-order-card__admin-actions--open'] : ''}`}>
-            <button
-                className={s['pk-order-card__admin-actions__prioritize']}
-            >Accion 01</button>
+
+            {/* POSIBLE MEJOR: Funcionalidad de agregar nuevos botones segun la necesidad de cada estado  */}
+            
+            <button className={s['pk-order-card__admin-actions__prioritize']} disabled>Desactivado</button>
             <button
                 className={s['pk-order-card__admin-actions__cancel']}
                 onClick={()=>cancelOrder(order)}
             >Cancelar</button>
         </div>
+
+        {/* Delivery Code Input */}
         {order.state == 'READY' && <div className={`${s['pk-order-card__delivery-code']} ${codeView ? s['pk-order-card__delivery-code--open'] : ''}`}>
             <label htmlFor="delivery-code">
                 Código de delivery:

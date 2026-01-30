@@ -4,8 +4,16 @@ import { OrderService } from "@/services/OrderService";
 import { useOrders } from '@/contexts/Orders.context';
 import { useRiders } from '@/contexts/Riders.context';
 import { toast } from 'react-toastify';
+import { nextStateType } from '@/dtos/Order.dto';
 
-type nextStateType = 'Preparar' | 'Terminar' | 'Entregar' 
+/**
+ * HOOK PARA LA GESTIÓN DE TARJETA DE ORDEN
+ * 
+ * Este hook proporciona funcionalidades para manejar
+ * el estado y las acciones relacionadas con una tarjeta de orden.
+ * 
+ * @returns Un objeto con métodos y estados para gestionar la tarjeta de orden.
+ */
 
 const useOrderCard = () => {
 
@@ -134,6 +142,25 @@ const useOrderCard = () => {
         }
     }, [orderService])
 
+    const stateChangeButton = async(order:Order) => {
+        if (order.state === 'READY') {
+            if(!codeView) {
+                setCodeView(true);
+                return;
+            }else{
+                await verifyCode(order);
+            }
+        } else {
+            await handleChangeState(order);
+        }
+    }
+
+    const closeButtonOption = () => {
+        setCodeView(false);
+        setActionView(false);
+        setError(false);
+    }
+
     return {
         handleChangeState,
         canAdvanceState,
@@ -149,7 +176,9 @@ const useOrderCard = () => {
         valueRef,
         codeView, setCodeView,
         verifyCode,
-        cancelOrder
+        cancelOrder,
+        stateChangeButton,
+        closeButtonOption
     }
 }
 
